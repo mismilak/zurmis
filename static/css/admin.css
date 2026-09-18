@@ -1,0 +1,8 @@
+/* اعمال فونت وزیرمتن روی پنل مدیریت جنگو */
+body,
+input, select, textarea, button,
+.module h2, .module caption,
+#header, #nav-sidebar, .dashboard #content,
+.button, input[type=submit], input[type=button], .submit-row input, a.button{
+  font-family:"Vazirmatn","IRANSans",Tahoma,system-ui,sans-serif !important;
+}
