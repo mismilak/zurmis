@@ -616,7 +616,7 @@ select.form-control{cursor:pointer}
   .section-head{margin-bottom:28px}
   .hero{padding:40px 0 56px}
   .hero-actions .btn{flex:1;justify-content:center}
-  .hero-float-card{inset-inline-start:auto;inset-inline-end:-6px;top:auto;bottom:-14px;padding:11px 15px}
+  .hero-float-card{top:14px;bottom:auto;inset-inline-start:8px;inset-inline-end:auto;padding:10px 14px}
   .hero-float-card b{font-size:21px}
   .stats-grid{grid-template-columns:1fr 1fr;padding:22px 0}
   .stat-item{border:0;padding:12px 6px}
@@ -631,7 +631,6 @@ select.form-control{cursor:pointer}
   .comment.reply{margin-inline-start:12px}
   .post-detail .blog-layout{padding-top:56px}
   .about-badge{inset-inline-end:8px;bottom:14px}
-  .hero-float-card{inset-inline-end:4px}
   .share-row{justify-content:center}
 }
 
