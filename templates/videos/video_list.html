@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load site_extras %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow anim">آپارات</span>
+    <h1 class="page-title anim" style="--d:.1s">ویدیوهای آموزشی حقوقی</h1>
+    <p class="page-sub anim" style="--d:.2s">نکات حقوقی کاربردی به زبان ساده؛ همه ویدیوها از کانال آپارات نمایش داده می‌شوند.</p>
+    {% if site.aparat_channel %}
+      <p class="anim" style="--d:.3s"><a href="{{ site.aparat_link }}" target="_blank" rel="noopener" class="btn btn-outline">کانال آپارات ما</a></p>
+    {% endif %}
+  </div>
+</section>
+
+{% if categories %}
+<div class="container filter-row">
+  <a href="{% url 'videos:list' %}" class="chip {% if not active_category %}chip-active{% endif %}">همه</a>
+  {% for cat in categories %}
+    <a href="?category={{ cat.slug }}" class="chip {% if active_category == cat %}chip-active{% endif %}">{{ cat.name }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="cards-grid">
+      {% for video in page_obj %}{% include "partials/video_card.html" %}{% empty %}
+        <p class="empty-state">هنوز ویدیویی ثبت نشده است.</p>
+      {% endfor %}
+    </div>
+    {% if page_obj.has_other_pages %}
+    <nav class="pagination" aria-label="صفحه‌بندی">
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% if active_category %}&category={{ active_category.slug }}{% endif %}" class="page-link">قبلی</a>{% endif %}
+      <span class="page-status">صفحه {{ page_obj.number|fanum }} از {{ page_obj.paginator.num_pages|fanum }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% if active_category %}&category={{ active_category.slug }}{% endif %}" class="page-link">بعدی</a>{% endif %}
+    </nav>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

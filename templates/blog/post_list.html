@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load site_extras %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow anim">وبلاگ حقوقی</span>
+    <h1 class="page-title anim" style="--d:.1s">
+      {% if category %}{{ category.name }}{% elif tag %}برچسب: {{ tag.name }}{% elif query %}نتایج «{{ query }}»{% else %}مقالات و نکات حقوقی{% endif %}
+    </h1>
+    <p class="page-sub anim" style="--d:.2s">{% if category and category.description %}{{ category.description }}{% else %}راهنمای گام‌به‌گام پرونده‌های حقوقی، کیفری، خانواده، ملکی و قراردادها.{% endif %}</p>
+    <form class="search-inline anim" style="--d:.3s" action="{% url 'blog:list' %}" method="get">
+      <input type="search" name="q" value="{{ query|default:'' }}" placeholder="جست‌وجو در مقالات…" aria-label="جست‌وجو در مقالات">
+      <button class="btn btn-primary" type="submit">جست‌وجو</button>
+    </form>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container blog-layout">
+    <div class="blog-main">
+      {% if featured %}
+        <div class="featured-strip">
+          {% for post in featured %}
+            <a href="{{ post.get_absolute_url }}" class="featured-item reveal">
+              {% if post.cover %}<img src="{{ post.cover.url }}" alt="{{ post.title }}" loading="lazy">{% endif %}
+              <span class="featured-body"><b>{{ post.title }}</b><small>{{ post.published_at|jalali:"short" }}</small></span>
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="cards-grid">
+        {% for post in page_obj %}{% include "partials/post_card.html" %}{% empty %}
+          <p class="empty-state">مقاله‌ای یافت نشد.</p>
+        {% endfor %}
+      </div>
+
+      {% if page_obj.has_other_pages %}
+      <nav class="pagination" aria-label="صفحه‌بندی">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-link">قبلی</a>{% endif %}
+        <span class="page-status">صفحه {{ page_obj.number|fanum }} از {{ page_obj.paginator.num_pages|fanum }}</span>
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-link">بعدی</a>{% endif %}
+      </nav>
+      {% endif %}
+    </div>
+
+    <aside class="blog-side">
+      <div class="side-box reveal">
+        <h3>دسته‌بندی‌ها</h3>
+        <ul class="side-links">
+          {% for cat in categories %}
+            <li><a href="{{ cat.get_absolute_url }}">{{ cat.name }} <span class="count">{{ cat.posts_count|fanum }}</span></a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% if popular_posts %}
+      <div class="side-box reveal">
+        <h3>پربازدیدترین‌ها</h3>
+        <ul class="side-posts">
+          {% for post in popular_posts %}
+            <li><a href="{{ post.get_absolute_url }}">{% if post.cover %}<img src="{{ post.cover.url }}" alt="" loading="lazy">{% endif %}<span>{{ post.title|truncatechars:55 }}</span></a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      {% if tags %}
+      <div class="side-box reveal">
+        <h3>برچسب‌ها</h3>
+        <div class="tag-cloud">{% for tag in tags %}<a href="{{ tag.get_absolute_url }}" class="chip">{{ tag.name }}</a>{% endfor %}</div>
+      </div>
+      {% endif %}
+      <div class="side-box side-cta reveal">
+        <h3>مشاوره حقوقی</h3>
+        <p>سوال حقوقی دارید؟ همین حالا درخواست خود را ثبت کنید.</p>
+        <a href="{% url 'core:contact' %}" class="btn btn-primary btn-block">درخواست مشاوره</a>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

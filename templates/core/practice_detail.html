@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load site_extras %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow anim">خدمات حقوقی</span>
+    <h1 class="page-title anim" style="--d:.1s">{% icon area.icon "icon-lg" %} {{ area.title }}</h1>
+    <p class="page-sub anim" style="--d:.2s">{{ area.short_description }}</p>
+  </div>
+</section>
+{% include "partials/breadcrumb.html" with crumbs=crumbs %}
+
+<section class="section">
+  <div class="container detail-grid">
+    <article class="detail-main reveal">
+      {% if area.image %}<img src="{{ area.image.url }}" alt="{{ area.title }}" class="detail-cover" loading="lazy">{% endif %}
+      <div class="rich-text">{{ area.description|safe|default:area.short_description }}</div>
+
+      <div class="cta-box">
+        <div>
+          <h3>برای این موضوع مشاوره می‌خواهید؟</h3>
+          <p>شرح مختصر پرونده را بفرستید تا در اولین فرصت بررسی شود.</p>
+        </div>
+        <a href="#consult" class="btn btn-primary">درخواست مشاوره</a>
+      </div>
+    </article>
+
+    <aside class="detail-side">
+      <div class="side-box reveal">
+        <h3>سایر خدمات</h3>
+        <ul class="side-links">
+          {% for other in others %}<li><a href="{{ other.get_absolute_url }}">{% icon other.icon "icon-sm" %}{{ other.title }}</a></li>{% endfor %}
+        </ul>
+      </div>
+      {% if site.phone %}
+      <div class="side-box side-cta reveal">
+        <h3>تماس مستقیم</h3>
+        <a class="btn btn-primary btn-block" href="tel:{{ site.phone|phone_link }}" dir="ltr">{{ site.phone }}</a>
+        {% if site.whatsapp %}<a class="btn btn-outline btn-block" href="{{ site.whatsapp_link }}" target="_blank" rel="noopener nofollow">واتساپ</a>{% endif %}
+      </div>
+      {% endif %}
+    </aside>
+  </div>
+</section>
+
+{% if posts %}
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-head reveal"><h2 class="section-title">مقالات مرتبط</h2></div>
+    <div class="cards-grid">{% for post in posts %}{% include "partials/post_card.html" %}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section-contact" id="consult">
+  <div class="container narrow">
+    <div class="section-head reveal"><h2 class="section-title">ثبت درخواست مشاوره</h2></div>
+    <div class="contact-form-wrap reveal">{% include "partials/consultation_form.html" %}</div>
+  </div>
+</section>
+{% endblock %}

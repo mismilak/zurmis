@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow anim">پرسش و پاسخ</span>
+    <h1 class="page-title anim" style="--d:.1s">پرسش‌های متداول</h1>
+    <p class="page-sub anim" style="--d:.2s">پاسخ کوتاه به پرتکرارترین سوال‌های حقوقی موکلان.</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container narrow">
+    <div class="accordion" data-accordion>
+      {% for faq in faqs %}
+        <div class="acc-item reveal">
+          <button type="button" class="acc-head" aria-expanded="false"><span>{{ faq.question }}</span><span class="acc-icon" aria-hidden="true"></span></button>
+          <div class="acc-body"><div class="acc-inner">{{ faq.answer|linebreaks }}</div></div>
+        </div>
+      {% empty %}
+        <p class="empty-state">هنوز پرسشی ثبت نشده است.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load site_extras %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow anim">ارتباط با ما</span>
+    <h1 class="page-title anim" style="--d:.1s">تماس و درخواست مشاوره</h1>
+    <p class="page-sub anim" style="--d:.2s">{{ site.consultation_note }}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container contact-grid">
+    <div class="contact-info reveal">
+      <ul class="contact-cards">
+        {% if site.phone %}<li><a href="tel:{{ site.phone|phone_link }}"><span class="ci-icon">{% icon "phone" "icon" %}</span><span><b>تلفن دفتر</b><small dir="ltr">{{ site.phone }}</small></span></a></li>{% endif %}
+        {% if site.mobile %}<li><a href="tel:{{ site.mobile|phone_link }}"><span class="ci-icon">{% icon "phone" "icon" %}</span><span><b>موبایل</b><small dir="ltr">{{ site.mobile }}</small></span></a></li>{% endif %}
+        {% if site.whatsapp %}<li><a href="{{ site.whatsapp_link }}" target="_blank" rel="noopener nofollow"><span class="ci-icon">{% icon "message" "icon" %}</span><span><b>واتساپ</b><small>ارسال پیام و مدارک</small></span></a></li>{% endif %}
+        {% if site.telegram %}<li><a href="{{ site.telegram_link }}" target="_blank" rel="noopener nofollow"><span class="ci-icon">{% icon "message" "icon" %}</span><span><b>تلگرام</b><small>@{{ site.telegram }}</small></span></a></li>{% endif %}
+        {% if site.email %}<li><a href="mailto:{{ site.email }}"><span class="ci-icon">{% icon "mail" "icon" %}</span><span><b>ایمیل</b><small dir="ltr">{{ site.email }}</small></span></a></li>{% endif %}
+        {% if site.address %}<li><span class="as-item"><span class="ci-icon">{% icon "map" "icon" %}</span><span><b>آدرس</b><small>{{ site.address }}</small></span></span></li>{% endif %}
+        {% if site.working_hours %}<li><span class="as-item"><span class="ci-icon">{% icon "clock" "icon" %}</span><span><b>ساعات کاری</b><small>{{ site.working_hours }}</small></span></span></li>{% endif %}
+      </ul>
+      {% if site.map_embed %}<div class="map-wrap">{{ site.map_embed|safe }}</div>{% endif %}
+    </div>
+    <div class="contact-form-wrap reveal">{% include "partials/consultation_form.html" %}</div>
+  </div>
+</section>
+{% endblock %}

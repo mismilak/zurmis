@@ -1,0 +1,19 @@
+{% load site_extras %}
+<article class="card post-card reveal">
+  <a href="{{ post.get_absolute_url }}" class="card-media">
+    {% if post.cover %}
+      <img src="{{ post.cover.url }}" alt="{{ post.title }}" loading="lazy">
+    {% else %}
+      <span class="card-placeholder">{% icon "book" "icon-lg" %}</span>
+    {% endif %}
+    {% if post.category %}<span class="chip chip-float">{{ post.category.name }}</span>{% endif %}
+  </a>
+  <div class="card-body">
+    <h3 class="card-title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+    <p class="card-text">{{ post.summary|striptags|truncatechars:120 }}</p>
+    <div class="card-meta">
+      <span>{% icon "clock" "icon-sm" %}{{ post.reading_time|fanum }} دقیقه مطالعه</span>
+      <span>{{ post.published_at|jalali:"short" }}</span>
+    </div>
+  </div>
+</article>

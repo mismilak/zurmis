@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+{% load static site_extras %}
+
+{% block title %}{{ site.lawyer_name }} | {{ site.job_title }}{% endblock %}
+{% block description %}{{ site.meta_description|default:site.hero_subtitle }}{% endblock %}
+{% block body_class %}page-home{% endblock %}
+
+{% block content %}
+
+{# ---------- معرفی / هیرو ---------- #}
+<section class="hero" id="hero">
+  <div class="hero-bg" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="grid-lines"></span>
+  </div>
+  <div class="container hero-inner">
+    <div class="hero-content">
+      <span class="pill anim" style="--d:.05s">
+        {% icon "award" "icon-sm" %}
+        {{ site.bar_association|default:"کانون وکلای دادگستری" }}
+        {% if site.license_number %}<b>پروانه {{ site.license_number|fanum }}</b>{% endif %}
+      </span>
+      <h1 class="hero-title anim" style="--d:.15s">{{ site.hero_title }}</h1>
+      <p class="hero-sub anim" style="--d:.25s">{{ site.hero_subtitle }}</p>
+
+      <div class="hero-actions anim" style="--d:.35s">
+        <a href="#consultation" class="btn btn-primary btn-lg">
+          {% icon "message" "icon-sm" %} درخواست مشاوره
+        </a>
+        {% if site.phone %}
+          <a href="tel:{{ site.phone|phone_link }}" class="btn btn-ghost btn-lg">
+            {% icon "phone" "icon-sm" %} <span dir="ltr">{{ site.phone }}</span>
+          </a>
+        {% endif %}
+      </div>
+
+      <ul class="hero-badges anim" style="--d:.45s">
+        <li>{% icon "shield" "icon-sm" %} محرمانگی کامل پرونده</li>
+        <li>{% icon "clock" "icon-sm" %} پاسخ‌گویی سریع</li>
+        <li>{% icon "check" "icon-sm" %} قبول وکالت در سراسر کشور</li>
+      </ul>
+    </div>
+
+    <div class="hero-visual anim" style="--d:.3s">
+      <div class="hero-card">
+        {% if site.hero_image %}
+          <img src="{{ site.hero_image.url }}" alt="{{ site.lawyer_name }}" class="hero-img">
+        {% elif site.profile_image %}
+          <img src="{{ site.profile_image.url }}" alt="{{ site.lawyer_name }}" class="hero-img">
+        {% else %}
+          <div class="hero-img placeholder">{% icon "scale" "icon-xl" %}</div>
+        {% endif %}
+        <div class="hero-card-info">
+          <strong>{{ site.lawyer_name }}</strong>
+          <span>{{ site.job_title }}</span>
+        </div>
+      </div>
+      {% if stats %}
+        <div class="hero-float-card floaty">
+          {% with stats.0 as s %}
+            <b class="counter" data-target="{{ s.value }}">۰</b><span>{{ s.suffix }} {{ s.label }}</span>
+          {% endwith %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{# ---------- آمار ---------- #}
+{% if stats %}
+<section class="stats-strip">
+  <div class="container stats-grid">
+    {% for stat in stats %}
+      <div class="stat-item reveal" style="--d:{{ forloop.counter0 }}00ms">
+        <span class="stat-icon">{% icon stat.icon "icon" %}</span>
+        <b class="counter" data-target="{{ stat.value }}">۰</b><span class="stat-suffix">{{ stat.suffix }}</span>
+        <p>{{ stat.label }}</p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{# ---------- درباره وکیل ---------- #}
+<section class="section" id="about">
+  <div class="container about-grid">
+    <div class="about-media reveal">
+      {% if site.profile_image %}
+        <img src="{{ site.profile_image.url }}" alt="{{ site.lawyer_name }}" loading="lazy">
+      {% else %}
+        <div class="about-placeholder">{% icon "gavel" "icon-xl" %}</div>
+      {% endif %}
+      <div class="about-badge">
+        {% icon "award" "icon-sm" %}
+        <span>{{ site.bar_association|default:"کانون وکلای دادگستری" }}</span>
+      </div>
+    </div>
+
+    <div class="about-content reveal">
+      <span class="eyebrow">معرفی</span>
+      <h2 class="section-title">{{ site.lawyer_name }}</h2>
+      <p class="lead">{{ site.about_short|default:site.hero_subtitle }}</p>
+      <div class="rich-text">{{ site.about_full|safe }}</div>
+
+      {% if educations or experiences or certificates %}
+      <div class="tabs" data-tabs>
+        <div class="tab-head" role="tablist">
+          {% if experiences %}<button type="button" class="tab-btn active" data-tab="exp" role="tab">سوابق شغلی</button>{% endif %}
+          {% if educations %}<button type="button" class="tab-btn {% if not experiences %}active{% endif %}" data-tab="edu" role="tab">تحصیلات</button>{% endif %}
+          {% if certificates %}<button type="button" class="tab-btn {% if not experiences and not educations %}active{% endif %}" data-tab="cert" role="tab">افتخارات و عضویت‌ها</button>{% endif %}
+        </div>
+
+        {% if experiences %}
+        <div class="tab-pane active" data-pane="exp">
+          <ul class="timeline">
+            {% for item in experiences %}
+              <li><b>{{ item.title }}</b>{% if item.organization %}<span>{{ item.organization }}</span>{% endif %}{% if item.period %}<i>{{ item.period }}</i>{% endif %}{% if item.description %}<p>{{ item.description }}</p>{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        {% if educations %}
+        <div class="tab-pane {% if not experiences %}active{% endif %}" data-pane="edu">
+          <ul class="timeline">
+            {% for item in educations %}
+              <li><b>{{ item.title }}</b>{% if item.organization %}<span>{{ item.organization }}</span>{% endif %}{% if item.period %}<i>{{ item.period }}</i>{% endif %}{% if item.description %}<p>{{ item.description }}</p>{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        {% if certificates %}
+        <div class="tab-pane {% if not experiences and not educations %}active{% endif %}" data-pane="cert">
+          <ul class="timeline">
+            {% for item in certificates %}
+              <li><b>{{ item.title }}</b>{% if item.organization %}<span>{{ item.organization }}</span>{% endif %}{% if item.period %}<i>{{ item.period }}</i>{% endif %}{% if item.description %}<p>{{ item.description }}</p>{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{# ---------- خدمات / زمینه‌های تخصصی ---------- #}
+{% if practice_areas %}
+<section class="section section-alt" id="services">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">تخصص‌ها</span>
+      <h2 class="section-title">زمینه‌های تخصصی وکالت</h2>
+      <p class="section-desc">در هر یک از حوزه‌های زیر، از مشاوره اولیه تا پیگیری کامل پرونده در کنار شما هستیم.</p>
+    </div>
+    <div class="services-grid">
+      {% for area in practice_areas %}
+        <a href="{{ area.get_absolute_url }}" class="service-card reveal" style="--d:{{ forloop.counter0 }}0ms">
+          <span class="service-icon">{% icon area.icon "icon" %}</span>
+          <h3>{{ area.title }}</h3>
+          <p>{{ area.short_description }}</p>
+          <span class="service-link">مشاهده جزئیات
+            <svg viewBox="0 0 24 24" class="icon-sm" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 6l-6 6 6 6"/></svg>
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ---------- مراحل همکاری ---------- #}
+{% if steps %}
+<section class="section" id="process">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">فرآیند</span>
+      <h2 class="section-title">مراحل همکاری با دفتر</h2>
+    </div>
+    <ol class="steps">
+      {% for step in steps %}
+        <li class="step reveal" style="--d:{{ forloop.counter0 }}00ms">
+          <span class="step-num">{{ forloop.counter|fanum }}</span>
+          <div>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.description }}</p>
+          </div>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+{% endif %}
+
+{# ---------- ویدیوهای آپارات ---------- #}
+{% if videos %}
+<section class="section section-alt" id="videos">
+  <div class="container">
+    <div class="section-head with-action reveal">
+      <div>
+        <span class="eyebrow">آموزش تصویری</span>
+        <h2 class="section-title">ویدیوهای حقوقی</h2>
+        <p class="section-desc">نکات کاربردی حقوقی به زبان ساده — منتشر شده در آپارات.</p>
+      </div>
+      <a href="{% url 'videos:list' %}" class="btn btn-outline">همه ویدیوها</a>
+    </div>
+    <div class="cards-grid">
+      {% for video in videos %}{% include "partials/video_card.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ---------- مقالات ---------- #}
+{% if posts %}
+<section class="section" id="blog">
+  <div class="container">
+    <div class="section-head with-action reveal">
+      <div>
+        <span class="eyebrow">دانستنی‌ها</span>
+        <h2 class="section-title">آخرین مقالات حقوقی</h2>
+      </div>
+      <a href="{% url 'blog:list' %}" class="btn btn-outline">همه مقالات</a>
+    </div>
+    <div class="cards-grid">
+      {% for post in posts %}{% include "partials/post_card.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ---------- نظرات موکلان ---------- #}
+{% if testimonials %}
+<section class="section section-alt" id="testimonials">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">اعتماد شما</span>
+      <h2 class="section-title">نظر موکلان</h2>
+    </div>
+    <div class="testimonial-slider" data-slider>
+      <div class="testimonial-track">
+        {% for t in testimonials %}
+          <figure class="testimonial-card">
+            <div class="stars" aria-label="امتیاز {{ t.rating }} از ۵">
+              {% for _ in t.stars %}{% icon "star" "icon-sm star-on" %}{% endfor %}
+            </div>
+            <blockquote>{{ t.content }}</blockquote>
+            <figcaption>
+              {% if t.avatar %}<img src="{{ t.avatar.url }}" alt="{{ t.name }}" loading="lazy">{% else %}<span class="avatar-fallback">{{ t.name|first }}</span>{% endif %}
+              <span><b>{{ t.name }}</b>{% if t.role %}<small>{{ t.role }}</small>{% endif %}</span>
+            </figcaption>
+          </figure>
+        {% endfor %}
+      </div>
+      <div class="slider-nav">
+        <button type="button" class="slider-btn" data-dir="prev" aria-label="قبلی">‹</button>
+        <button type="button" class="slider-btn" data-dir="next" aria-label="بعدی">›</button>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ---------- سوالات متداول ---------- #}
+{% if faqs %}
+<section class="section" id="faq">
+  <div class="container narrow">
+    <div class="section-head reveal">
+      <span class="eyebrow">پاسخ به شما</span>
+      <h2 class="section-title">پرسش‌های متداول</h2>
+    </div>
+    <div class="accordion" data-accordion>
+      {% for faq in faqs %}
+        <div class="acc-item reveal">
+          <button type="button" class="acc-head" aria-expanded="false">
+            <span>{{ faq.question }}</span>
+            <span class="acc-icon" aria-hidden="true"></span>
+          </button>
+          <div class="acc-body"><div class="acc-inner">{{ faq.answer|linebreaks }}</div></div>
+        </div>
+      {% endfor %}
+    </div>
+    <p class="center-text mt-24"><a href="{% url 'core:faq' %}" class="btn btn-outline">مشاهده همه پرسش‌ها</a></p>
+  </div>
+</section>
+{% endif %}
+
+{# ---------- تماس و فرم مشاوره ---------- #}
+<section class="section section-contact" id="consultation">
+  <div class="container contact-grid">
+    <div class="contact-info reveal">
+      <span class="eyebrow">ارتباط با ما</span>
+      <h2 class="section-title">درخواست مشاوره حقوقی</h2>
+      <p class="lead">فرم روبه‌رو را تکمیل کنید یا از راه‌های زیر مستقیماً در تماس باشید.</p>
+
+      <ul class="contact-cards">
+        {% if site.phone %}
+        <li><a href="tel:{{ site.phone|phone_link }}">
+          <span class="ci-icon">{% icon "phone" "icon" %}</span>
+          <span><b>تماس تلفنی</b><small dir="ltr">{{ site.phone }}{% if site.phone_secondary %} — {{ site.phone_secondary }}{% endif %}</small></span>
+        </a></li>
+        {% endif %}
+        {% if site.whatsapp %}
+        <li><a href="{{ site.whatsapp_link }}" target="_blank" rel="noopener nofollow">
+          <span class="ci-icon">{% icon "message" "icon" %}</span>
+          <span><b>واتساپ</b><small>گفت‌وگوی سریع و ارسال مدارک</small></span>
+        </a></li>
+        {% endif %}
+        {% if site.address %}
+        <li><span class="as-item">
+          <span class="ci-icon">{% icon "map" "icon" %}</span>
+          <span><b>آدرس دفتر</b><small>{{ site.address }}</small></span>
+        </span></li>
+        {% endif %}
+        {% if site.working_hours %}
+        <li><span class="as-item">
+          <span class="ci-icon">{% icon "clock" "icon" %}</span>
+          <span><b>ساعات کاری</b><small>{{ site.working_hours }}</small></span>
+        </span></li>
+        {% endif %}
+      </ul>
+
+      {% if site.map_embed %}<div class="map-wrap">{{ site.map_embed|safe }}</div>{% endif %}
+    </div>
+
+    <div class="contact-form-wrap reveal">
+      {% include "partials/consultation_form.html" %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

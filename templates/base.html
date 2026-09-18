@@ -1,0 +1,201 @@
+{% load static site_extras %}<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}{{ meta_title|default:site.site_name }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ meta_description|default:site.meta_description }}{% endblock %}">
+  {% if site.meta_keywords %}<meta name="keywords" content="{{ site.meta_keywords }}">{% endif %}
+  <meta name="theme-color" content="#0d1b2f">
+  <link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fa_IR">
+  <meta property="og:site_name" content="{{ site.site_name }}">
+  <meta property="og:title" content="{{ meta_title|default:site.site_name }}">
+  <meta property="og:description" content="{{ meta_description|default:site.meta_description }}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  {% block og_image %}{% if site.profile_image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site.profile_image.url }}">{% endif %}{% endblock %}
+  <meta name="twitter:card" content="summary_large_image">
+
+  {% if site.favicon %}<link rel="icon" href="{{ site.favicon.url }}">{% else %}<link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">{% endif %}
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Attorney",
+    "name": "{{ site.lawyer_name }}",
+    "description": "{{ site.job_title }}{% if site.bar_association %} - {{ site.bar_association }}{% endif %}",
+    "url": "{{ request.scheme }}://{{ request.get_host }}",
+    {% if site.phone %}"telephone": "{{ site.phone|phone_link }}",{% endif %}
+    {% if site.email %}"email": "{{ site.email }}",{% endif %}
+    "address": {"@type": "PostalAddress", "addressCountry": "IR", "streetAddress": "{{ site.address|striptags|truncatechars:120 }}"},
+    "areaServed": "IR",
+    "priceRange": "$$"
+  }
+  </script>
+  {{ site.analytics_code|safe }}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+<a href="#main" class="skip-link">رفتن به محتوای اصلی</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a href="{% url 'core:home' %}" class="brand">
+      {% if site.logo %}
+        <img src="{{ site.logo.url }}" alt="{{ site.site_name }}" class="brand-logo">
+      {% else %}
+        <span class="brand-mark">{% icon "scale" "icon" %}</span>
+      {% endif %}
+      <span class="brand-text">
+        <strong>{{ site.lawyer_name }}</strong>
+        <small>{{ site.job_title }}</small>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="منوی اصلی">
+      <a href="{% url 'core:home' %}">خانه</a>
+      <a href="{% url 'core:home' %}#about">درباره وکیل</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-toggle" aria-expanded="false">خدمات حقوقی
+          <svg viewBox="0 0 24 24" class="chev" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="nav-dropdown-menu">
+          {% for area in nav_practice_areas %}
+            <a href="{{ area.get_absolute_url }}">{% icon area.icon "icon-sm" %}{{ area.title }}</a>
+          {% empty %}
+            <a href="{% url 'core:home' %}#services">همه خدمات</a>
+          {% endfor %}
+        </div>
+      </div>
+      <a href="{% url 'blog:list' %}">مقالات</a>
+      <a href="{% url 'videos:list' %}">ویدیوها</a>
+      <a href="{% url 'core:faq' %}">سوالات متداول</a>
+      <a href="{% url 'core:contact' %}">تماس</a>
+    </nav>
+
+    <div class="header-actions">
+      <button type="button" class="icon-btn" id="searchToggle" aria-label="جست‌وجو">
+        <svg viewBox="0 0 24 24" class="icon" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </button>
+      {% if site.phone %}
+        <a class="btn btn-primary btn-sm hide-sm" href="tel:{{ site.phone|phone_link }}">
+          {% icon "phone" "icon-sm" %}<span dir="ltr">{{ site.phone }}</span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="search-panel" id="searchPanel" hidden>
+    <form class="container" action="{% url 'core:search' %}" method="get" role="search">
+      <input type="search" name="q" placeholder="جست‌وجو در مقالات، ویدیوها و خدمات…" value="{{ query|default:'' }}" aria-label="عبارت جست‌وجو">
+      <button class="btn btn-primary" type="submit">جست‌وجو</button>
+    </form>
+  </div>
+</header>
+
+{% if messages %}
+  <div class="container toast-wrap">
+    {% for message in messages %}
+      <div class="toast toast-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<main id="main">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-col">
+      <div class="brand footer-brand">
+        {% if site.logo %}<img src="{{ site.logo.url }}" alt="{{ site.site_name }}" class="brand-logo">{% else %}<span class="brand-mark">{% icon "scale" "icon" %}</span>{% endif %}
+        <span class="brand-text"><strong>{{ site.lawyer_name }}</strong><small>{{ site.job_title }}</small></span>
+      </div>
+      <p class="footer-about">{{ site.about_short|default:site.hero_subtitle|truncatechars:220 }}</p>
+      <div class="social-row">
+        {% if site.instagram %}<a href="{{ site.instagram_link }}" target="_blank" rel="noopener nofollow" aria-label="اینستاگرام" class="social">IG</a>{% endif %}
+        {% if site.telegram %}<a href="{{ site.telegram_link }}" target="_blank" rel="noopener nofollow" aria-label="تلگرام" class="social">TG</a>{% endif %}
+        {% if site.eitaa %}<a href="{{ site.eitaa_link }}" target="_blank" rel="noopener nofollow" aria-label="ایتا" class="social">ای</a>{% endif %}
+        {% if site.aparat_channel %}<a href="{{ site.aparat_link }}" target="_blank" rel="noopener nofollow" aria-label="آپارات" class="social">آپ</a>{% endif %}
+        {% if site.whatsapp %}<a href="{{ site.whatsapp_link }}" target="_blank" rel="noopener nofollow" aria-label="واتساپ" class="social">WA</a>{% endif %}
+        {% if site.linkedin %}<a href="{{ site.linkedin }}" target="_blank" rel="noopener nofollow" aria-label="لینکدین" class="social">in</a>{% endif %}
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>خدمات حقوقی</h4>
+      <ul>
+        {% for area in nav_practice_areas %}<li><a href="{{ area.get_absolute_url }}">{{ area.title }}</a></li>{% endfor %}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>دسترسی سریع</h4>
+      <ul>
+        <li><a href="{% url 'core:home' %}#about">درباره وکیل</a></li>
+        <li><a href="{% url 'blog:list' %}">مقالات حقوقی</a></li>
+        <li><a href="{% url 'videos:list' %}">ویدیوها</a></li>
+        <li><a href="{% url 'core:faq' %}">سوالات متداول</a></li>
+        <li><a href="{% url 'core:contact' %}">درخواست مشاوره</a></li>
+        {% for page in footer_pages %}<li><a href="{{ page.get_absolute_url }}">{{ page.title }}</a></li>{% endfor %}
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>راه‌های ارتباطی</h4>
+      <ul class="contact-list">
+        {% if site.phone %}<li>{% icon "phone" "icon-sm" %}<a href="tel:{{ site.phone|phone_link }}" dir="ltr">{{ site.phone }}</a></li>{% endif %}
+        {% if site.mobile %}<li>{% icon "phone" "icon-sm" %}<a href="tel:{{ site.mobile|phone_link }}" dir="ltr">{{ site.mobile }}</a></li>{% endif %}
+        {% if site.email %}<li>{% icon "mail" "icon-sm" %}<a href="mailto:{{ site.email }}" dir="ltr">{{ site.email }}</a></li>{% endif %}
+        {% if site.address %}<li>{% icon "map" "icon-sm" %}<span>{{ site.address }}</span></li>{% endif %}
+        {% if site.working_hours %}<li>{% icon "clock" "icon-sm" %}<span>{{ site.working_hours }}</span></li>{% endif %}
+      </ul>
+      {% if site.enamad_code %}<div class="enamad">{{ site.enamad_code|safe }}</div>{% endif %}
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <p>{{ site.footer_note|default:"تمامی حقوق این وب‌سایت محفوظ است." }}</p>
+    {% if site.license_number %}<p class="license">شماره پروانه وکالت: {{ site.license_number|fanum }}{% if site.bar_association %} — {{ site.bar_association }}{% endif %}</p>{% endif %}
+  </div>
+</footer>
+
+{# --- ناوبار شناور پایین صفحه (موبایل) --- #}
+<nav class="bottom-nav" id="bottomNav" aria-label="منوی موبایل">
+  <a href="{% url 'core:home' %}" class="bn-item {% if request.path == '/' %}active{% endif %}">
+    <span class="bn-icon">{% icon "home" "icon" %}</span><span class="bn-label">خانه</span>
+  </a>
+  <a href="{% url 'core:home' %}#services" class="bn-item">
+    <span class="bn-icon">{% icon "briefcase" "icon" %}</span><span class="bn-label">خدمات</span>
+  </a>
+  <a href="{% if site.whatsapp %}{{ site.whatsapp_link }}{% elif site.phone %}tel:{{ site.phone|phone_link }}{% else %}{% url 'core:contact' %}{% endif %}" class="bn-item bn-cta" {% if site.whatsapp %}target="_blank" rel="noopener"{% endif %}>
+    <span class="bn-icon">{% icon "message" "icon" %}</span><span class="bn-label">مشاوره</span>
+  </a>
+  <a href="{% url 'videos:list' %}" class="bn-item {% if '/videos/' in request.path %}active{% endif %}">
+    <span class="bn-icon">{% icon "video" "icon" %}</span><span class="bn-label">ویدیو</span>
+  </a>
+  <a href="{% url 'blog:list' %}" class="bn-item {% if '/blog/' in request.path %}active{% endif %}">
+    <span class="bn-icon">{% icon "book" "icon" %}</span><span class="bn-label">مقالات</span>
+  </a>
+</nav>
+
+{# --- دکمه‌های شناور (دسکتاپ) --- #}
+<div class="float-actions">
+  {% if site.whatsapp %}<a class="fab fab-wa" href="{{ site.whatsapp_link }}" target="_blank" rel="noopener nofollow" aria-label="واتساپ">{% icon "message" "icon" %}</a>{% endif %}
+  {% if site.phone %}<a class="fab fab-call" href="tel:{{ site.phone|phone_link }}" aria-label="تماس تلفنی">{% icon "phone" "icon" %}</a>{% endif %}
+  <button class="fab fab-top" id="backToTop" aria-label="بازگشت به بالا">
+    <svg viewBox="0 0 24 24" class="icon" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 15 6-6 6 6"/></svg>
+  </button>
+</div>
+
+<script src="{% static 'js/main.js' %}" defer></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

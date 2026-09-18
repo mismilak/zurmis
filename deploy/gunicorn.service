@@ -1,0 +1,23 @@
+# فایل سرویس systemd — مسیر: /etc/systemd/system/lawyer-site.service
+# فعال‌سازی:
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now lawyer-site
+[Unit]
+Description=Lawyer website (Django + Gunicorn)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/lawyer-site
+Environment="PATH=/var/www/lawyer-site/.venv/bin"
+ExecStart=/var/www/lawyer-site/.venv/bin/gunicorn \
+    --workers 3 \
+    --timeout 60 \
+    --bind unix:/run/lawyer-site.sock \
+    config.wsgi:application
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+<nav class="breadcrumb" aria-label="مسیر صفحه">
+  <div class="container">
+    <a href="{% url 'core:home' %}">خانه</a>
+    {% for item in crumbs %}
+      <span class="sep">/</span>
+      {% if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}<span aria-current="page">{{ item.title }}</span>{% endif %}
+    {% endfor %}
+  </div>
+</nav>

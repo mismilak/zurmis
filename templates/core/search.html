@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load site_extras %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1 class="page-title anim">جست‌وجو</h1>
+    <form class="search-inline anim" style="--d:.15s" action="{% url 'core:search' %}" method="get">
+      <input type="search" name="q" value="{{ query }}" placeholder="عبارت مورد نظر…" aria-label="جست‌وجو">
+      <button class="btn btn-primary" type="submit">جست‌وجو</button>
+    </form>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    {% if query %}
+      {% if areas %}
+        <h2 class="section-title small">خدمات</h2>
+        <div class="services-grid mb-32">
+          {% for area in areas %}
+            <a href="{{ area.get_absolute_url }}" class="service-card reveal"><span class="service-icon">{% icon area.icon "icon" %}</span><h3>{{ area.title }}</h3><p>{{ area.short_description }}</p></a>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if posts %}
+        <h2 class="section-title small">مقالات</h2>
+        <div class="cards-grid mb-32">{% for post in posts %}{% include "partials/post_card.html" %}{% endfor %}</div>
+      {% endif %}
+      {% if videos %}
+        <h2 class="section-title small">ویدیوها</h2>
+        <div class="cards-grid">{% for video in videos %}{% include "partials/video_card.html" %}{% endfor %}</div>
+      {% endif %}
+      {% if not posts and not videos and not areas %}
+        <p class="empty-state">نتیجه‌ای برای «{{ query }}» پیدا نشد.</p>
+      {% endif %}
+    {% else %}
+      <p class="empty-state">عبارتی برای جست‌وجو وارد کنید.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
